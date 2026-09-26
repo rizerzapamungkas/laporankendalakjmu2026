@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kendala KJMU Tahap II Tahun 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; color: #1e293b; }
+
+        #global-loader {
+            position: fixed; inset: 0; background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px); display: none; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 9999;
+        }
+
+        .spinner-pop {
+            width: 60px; height: 60px; border: 6px solid #f3f3f3;
+            border-top: 6px solid #1e293b; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="global-loader">
+        <div class="spinner-pop"></div>
+        <p id="loader-text" class="mt-4 text-slate-900 font-black uppercase tracking-widest text-xs animate-pulse">Memproses...</p>
+    </div>
+
+    <!-- MODAL POP-UP NOTIFIKASI -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center animate-in fade-in zoom-in duration-200">
+            <div id="modal-icon-container" class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-black"></div>
+            <h3 id="modal-title" class="text-base font-black text-slate-900 uppercase tracking-wider mb-2">NOTIFIKASI</h3>
+            <p id="modal-text" class="text-xs font-bold text-slate-500 mb-6 leading-relaxed">Pesan notifikasi.</p>
+            <button onclick="closeModal()" class="w-full bg-slate-900 hover:bg-black text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-6 py-12">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-black text-slate-900 tracking-tighter uppercase mb-2">Helpdesk KJMU Tahap II Tahun 2026</h1>
+            <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">Laporan Kendala Pendaftaran KJMU</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 bg-slate-200 p-1.5 rounded-2xl">
+            <button onclick="switchTab('lapor')" id="btn-tab-lapor" class="flex-1 py-3 bg-white shadow-sm rounded-xl text-xs font-black text-slate-900 uppercase tracking-widest transition-all cursor-pointer">Buat Laporan</button>
+            <button onclick="switchTab('status')" id="btn-tab-status" class="flex-1 py-3 hover:bg-white/50 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer">Cek Status Laporan</button>
+        </div>
+
+        <!-- TAB 1: FORM LAPORAN -->
+        <div id="tab-lapor" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 block">
+            <div class="mb-6 border-b border-slate-100 pb-4">
+                <h2 class="text-lg font-black text-slate-800 uppercase tracking-widest">Formulir Pelaporan Kendala</h2>
+                <p class="text-xs font-bold text-slate-400 mt-1">Isi data di bawah dengan lengkap dan benar.</p>
+            </div>
+
+            <form id="form-laporan" onsubmit="submitLaporan(event)">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Nomor Induk Kependudukan (NIK) <span class="text-rose-500">*</span></label>
+                        <input type="text" id="nik" required minlength="16" maxlength="16" pattern="\d{16}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Masukkan 16 Digit NIK" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Nomor Induk Mahasiswa (NIM) <span class="text-rose-500">*</span></label>
+                        <input type="text" id="nim" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Nama Mahasiswa <span class="text-rose-500">*</span></label>
+                        <input type="text" id="nama" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Nama Perguruan Tinggi <span class="text-rose-500">*</span></label>
+                        <input type="text" id="universitas" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Program Studi <span class="text-rose-500">*</span></label>
+                        <input type="text" id="prodi" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Username pada akun portal KJMU</label>
+                        <input type="text" id="username" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Email pada akun portal KJMU</label>
+                        <input type="email" id="email" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">No. HP <span class="text-rose-500">*</span></label>
+                        <input type="text" id="nohp" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Contoh: 08123456789" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Permasalahan <span class="text-rose-500">*</span></label>
+                        <select id="permasalahan" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                            <option value="">Pilih Permasalahan</option>
+                            <option value="Lupa Username">Lupa Username</option>
+                            <option value="Lupa Password">Lupa Password</option>
+                            <option value="Lupa Email">Lupa Email</option>
+                            <option value="Gagal Login / Belum Aktivasi">Gagal Login / Belum Aktivasi</option>
+                            <option value="Salah Upload Berkas">Salah Upload Berkas</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">Keterangan Lainnya</label>
+                        <textarea id="keterangan" rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all" placeholder="Jelaskan detail permasalahan..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer">
+                    Kirim Laporan
+                </button>
+            </form>
+        </div>
+
+        <!-- TAB 2: CEK STATUS -->
+        <div id="tab-status" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 hidden">
+            <div class="mb-6 border-b border-slate-100 pb-4">
+                <h2 class="text-lg font-black text-slate-800 uppercase tracking-widest">Cek Status Laporan</h2>
+                <p class="text-xs font-bold text-slate-400 mt-1">Masukkan NIM dan No. HP untuk melihat progres laporan kendala.</p>
+            </div>
+
+            <form id="form-cek" onsubmit="cekStatus(event)" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">NIM <span class="text-rose-500">*</span></label>
+                        <input type="text" id="cek-nim" required placeholder="Masukkan NIM" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-700 uppercase tracking-widest mb-1.5">No. HP <span class="text-rose-500">*</span></label>
+                        <input type="text" id="cek-nohp" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Masukkan No. HP" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer">
+                    CARI STATUS
+                </button>
+            </form>
+
+            <div id="hasil-card" class="hidden border-2 border-slate-200 rounded-2xl overflow-hidden">
+                <div class="bg-slate-50 p-4 border-b border-slate-200 flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Atas Nama</p>
+                        <h3 id="res-nama" class="text-lg font-black text-slate-900 uppercase">NAMA MAHASISWA</h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Waktu Lapor</p>
+                        <p id="res-waktu" class="text-xs font-bold text-slate-500">-</p>
+                    </div>
+                </div>
+                <div class="p-5 flex flex-col gap-4">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status Pengerjaan</p>
+                        <div id="res-status" class="inline-block px-4 py-1.5 rounded-lg text-sm font-black tracking-wide">-</div>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Hasil / Catatan Admin</p>
+                        <p id="res-hasil" class="text-sm font-bold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 break-words whitespace-pre-wrap">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GANTI dengan URL Web App hasil deploy Code.gs kamu
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbw4pIbMye-LP9fxGSvvec0qry1XqmPtpCMroAQG0Sz5mzowX3fslff-QW1WoI4IMfvf/exec';
+
+        function toggleLoader(show, text = 'Memproses...') {
+            const loader = document.getElementById('global-loader');
+            document.getElementById('loader-text').innerText = text;
+            loader.style.display = show ? 'flex' : 'none';
+        }
+
+        function switchTab(tabName) {
+            const tabLapor = document.getElementById('tab-lapor');
+            const tabStatus = document.getElementById('tab-status');
+            const btnLapor = document.getElementById('btn-tab-lapor');
+            const btnStatus = document.getElementById('btn-tab-status');
+
+            if (tabName === 'lapor') {
+                tabLapor.classList.remove('hidden');
+                tabStatus.classList.add('hidden');
+                btnLapor.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+                btnLapor.classList.remove('hover:bg-white/50', 'text-slate-500');
+                btnStatus.classList.add('hover:bg-white/50', 'text-slate-500');
+                btnStatus.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+            } else {
+                tabLapor.classList.add('hidden');
+                tabStatus.classList.remove('hidden');
+                btnStatus.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+                btnStatus.classList.remove('hover:bg-white/50', 'text-slate-500');
+                btnLapor.classList.add('hover:bg-white/50', 'text-slate-500');
+                btnLapor.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+            }
+        }
+
+        function showModal(title, message, isSuccess = true) {
+            const modal = document.getElementById('custom-modal');
+            const iconContainer = document.getElementById('modal-icon-container');
+            const titleEl = document.getElementById('modal-title');
+            const textEl = document.getElementById('modal-text');
+
+            titleEl.innerText = title;
+            textEl.innerText = message;
+
+            if (isSuccess) {
+                iconContainer.className = 'w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-black';
+                iconContainer.innerHTML = '✓';
+            } else {
+                iconContainer.className = 'w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-black';
+                iconContainer.innerHTML = '!';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.remove('flex');
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        async function submitLaporan(e) {
+            e.preventDefault();
+            const nikVal = document.getElementById('nik').value.trim();
+
+            if (nikVal.length !== 16) {
+                showModal('Peringatan', 'NIK harus tepat 16 digit angka.', false);
+                return;
+            }
+
+            const payload = {
+                nik: nikVal,
+                nim: document.getElementById('nim').value.trim(),
+                nama: document.getElementById('nama').value.trim(),
+                universitas: document.getElementById('universitas').value.trim(),
+                prodi: document.getElementById('prodi').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                nohp: document.getElementById('nohp').value.trim(),
+                permasalahan: document.getElementById('permasalahan').value,
+                keterangan: document.getElementById('keterangan').value.trim()
+            };
+
+            toggleLoader(true, 'Memeriksa NIK & Menyimpan...');
+
+            try {
+                const res = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
+                const rawText = await res.text();
+                const result = JSON.parse(rawText);
+
+                toggleLoader(false);
+
+                if (result.status === 'success') {
+                    showModal('Berhasil', result.message || 'Laporan berhasil dikirim! Silakan cek status laporan Anda secara berkala.', true);
+                    document.getElementById('form-laporan').reset();
+                } else {
+                    showModal('Gagal Mengirim', result.message || 'NIK tersebut sudah terdaftar dan laporan sebelumnya masih dalam proses.', false);
+                }
+            } catch (err) {
+                toggleLoader(false);
+                showModal('Gagal Mengirim', 'Terjadi kendala pada jaringan atau server. Silakan coba beberapa saat lagi.', false);
+            }
+        }
+
+        async function cekStatus(e) {
+            e.preventDefault();
+            const nim = document.getElementById('cek-nim').value.trim();
+            const nohp = document.getElementById('cek-nohp').value.trim();
+            const hasilCard = document.getElementById('hasil-card');
+
+            hasilCard.classList.add('hidden');
+            toggleLoader(true, 'Mencari Data...');
+
+            try {
+                const res = await fetch(`${GAS_URL}?nim=${encodeURIComponent(nim)}&nohp=${encodeURIComponent(nohp)}`);
+                const rawText = await res.text();
+                const result = JSON.parse(rawText);
+
+                toggleLoader(false);
+
+                if (result.status === 'success') {
+                    document.getElementById('res-nama').innerText = result.data.nama || 'TIDAK DIKETAHUI';
+                    document.getElementById('res-waktu').innerText = result.data.timestamp || '-';
+
+                    const statusText = result.data.status_pengerjaan || 'Proses';
+                    const statusEl = document.getElementById('res-status');
+                    statusEl.innerText = statusText;
+
+                    const statusLower = statusText.toLowerCase();
+                    if (statusLower.includes('selesai')) {
+                        statusEl.className = 'inline-block px-4 py-1.5 rounded-lg text-sm font-black tracking-wide bg-emerald-100 text-emerald-700';
+                    } else if (statusLower.includes('revisi') || statusLower.includes('kurang')) {
+                        statusEl.className = 'inline-block px-4 py-1.5 rounded-lg text-sm font-black tracking-wide bg-orange-100 text-orange-700';
+                    } else if (statusLower.includes('proses')) {
+                        statusEl.className = 'inline-block px-4 py-1.5 rounded-lg text-sm font-black tracking-wide bg-blue-100 text-blue-700';
+                    } else {
+                        statusEl.className = 'inline-block px-4 py-1.5 rounded-lg text-sm font-black tracking-wide bg-slate-100 text-slate-700 border border-slate-200';
+                    }
+
+                    // FIX: sebelumnya "result.Data.hasil" (D besar) -> selalu error,
+                    // karena backend mengirim key "data" huruf kecil semua.
+                    document.getElementById('res-hasil').innerText = result.data.hasil || '-';
+                    hasilCard.classList.remove('hidden');
+                } else {
+                    showModal('Tidak Ditemukan', 'Data laporan dengan NIM dan No. HP tersebut tidak ditemukan, silakan cek kembali datanya.', false);
+                }
+            } catch (err) {
+                toggleLoader(false);
+                showModal('Tidak Ditemukan', 'Data laporan dengan NIM dan No. HP tersebut tidak ditemukan, silakan cek kembali datanya.', false);
+            }
+        }
+    </script>
+</body>
+</html>
